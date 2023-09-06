@@ -1,10 +1,23 @@
 #include "tcpworker.h"
 #include <QTime>
 
-TcpWorker::TcpWorker(QObject *parent) : QObject(parent)
-  ,_socket(new QTcpSocket(this))
+#define DEFAULT_IP "10.1.5.60"
+#define DEFAULT_PORT 2323
+
+TcpWorker::TcpWorker(QString &hostName, QString &ip, quint16 port, QObject *parent) : QObject(parent)
+,_socket(new QTcpSocket(this))
+, _hostName(hostName)
 {
-    _socket->connectToHost(QHostAddress::LocalHost, 2323);
+    if(port == 0)
+        port = DEFAULT_PORT;
+    _socket->connectToHost(ip, port);
+    connect(_socket, &QTcpSocket::readyRead, this, &TcpWorker::slotReadyRead);
+}
+
+TcpWorker::TcpWorker(QString &hostName, QObject *parent) : QObject(parent)
+, _hostName(hostName)
+{
+    _socket->connectToHost(DEFAULT_IP, DEFAULT_PORT);
     connect(_socket, &QTcpSocket::readyRead, this, &TcpWorker::slotReadyRead);
 //    connect(_socket, &QTcpSocket::disconnected, this, &MainWindow::slotDisconnected);
 }
@@ -33,8 +46,9 @@ void TcpWorker::slotReadyRead()
             break;
         }
         QString str;
-        in >> str;
-        emit incomeMsg(str);
+        QString host;
+        in >> host >> str;
+        emit incomeMsg(host, str);
         nextBlockSize = 0;
         break;
     }
@@ -45,12 +59,12 @@ void TcpWorker::slotDisconnected()
 
 }
 
-void TcpWorker::sentToServer(const QString &msg)
+void TcpWorker::sentToServer(const QString ip, const QString &msg)
 {
     _data.clear();
     QDataStream out(&_data, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_6_2);
-    out << quint16(0) << QTime::currentTime() << msg;
+    out << quint16(0) << ip << _hostName << msg;
     out.device()->seek(0);
     out << quint16(_data.size() - sizeof(quint16));
     _socket->write(_data);

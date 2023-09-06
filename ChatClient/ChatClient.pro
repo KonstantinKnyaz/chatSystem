@@ -8,17 +8,27 @@ CONFIG += c++17
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+INCLUDEPATH += include/
+
 SOURCES += \
+    cpp/addclientdlg.cpp \
+    cpp/clienttablemodel.cpp \
+    cpp/settingsdlg.cpp \
     main.cpp \
-    mainwindow.cpp \
-    tcpworker.cpp
+    cpp/mainwindow.cpp \
+    cpp/tcpworker.cpp
 
 HEADERS += \
-    mainwindow.h \
-    tcpworker.h
+    include/addclientdlg.h \
+    include/clienttablemodel.h \
+    include/settingsdlg.h \
+    include/mainwindow.h \
+    include/tcpworker.h
 
 FORMS += \
-    mainwindow.ui
+    ui/addclientdlg.ui \
+    ui/settingsdlg.ui \
+    ui/mainwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

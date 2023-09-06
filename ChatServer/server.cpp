@@ -2,7 +2,7 @@
 #include <QTime>
 
 Server::Server() :
-_Sockets(new QHash<quint64,QTcpSocket*>())
+_Sockets(new QHash<QString,QTcpSocket*>())
 {
     if(listen(QHostAddress::Any, 2323)) {
         qInfo() << "Сервер запущен";
@@ -17,9 +17,11 @@ void Server::incomingConnection(qintptr handle)
     socket->setSocketDescriptor(handle);
     connect(socket, &QTcpSocket::readyRead, this, &Server::slotReadyRead);
     connect(socket, &QTcpSocket::disconnected, socket, &QTcpSocket::deleteLater);
+    QStringList ipLst = socket->peerAddress().toString().split(":");
+    qDebug() << ipLst;
+    _Sockets->insert(ipLst.last(), socket);
 
-    _Sockets->insert(handle, socket);
-    qInfo() << "Client connected: " << handle;
+    qInfo() << "Client connected: " << socket->peerAddress() << socket->peerPort();
 }
 
 void Server::slotReadyRead()
@@ -46,22 +48,26 @@ void Server::slotReadyRead()
             break;
         }
         QString str;
-        QTime time;
-        in >> time >> str;
-        QString inMsg = time.toString("hh:mm:ss") + ": " + str;
+        QString ip;
+        in >> ip >> _hostName >> str;
         nextBlockSize = 0;
-        qDebug() << inMsg;
-        sendToClient(str);
+        qDebug() << ip << _hostName << " " << str;
+        sendToClient(ip, str);
         break;
     }
 }
 
-void Server::sendToClient(QString &msg)
+void Server::sendToClient(QString &ip, QString &msg)
 {
     _data.clear();
+    _socket = _Sockets->value(ip);
+    if(_socket == Q_NULLPTR) {
+        qWarning() << "Не найден пользователь с таким ip:" << ip;
+        return;
+    }
     QDataStream out(&_data, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_6_2);
-    out << quint16(0) << msg;
+    out << quint16(0) << _hostName << msg;
     out.device()->seek(0);
     out << quint16(_data.size() - sizeof(quint16));
     _socket->write(_data);

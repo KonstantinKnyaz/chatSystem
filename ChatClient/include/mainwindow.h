@@ -3,7 +3,11 @@
 
 #include <QMainWindow>
 #include <QTcpSocket>
+
 #include "tcpworker.h"
+#include "settingsdlg.h"
+#include "clienttablemodel.h"
+#include "addclientdlg.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -22,11 +26,21 @@ private slots:
 
     void on_msgLine_returnPressed();
 
-    void newMsg(QString msg);
+    void newMsg(QString host, QString msg);
+
+    void on_addClient_clicked();
+
+    void on_delClient_clicked();
 
 private:
     Ui::MainWindow *ui;
     TcpWorker *_tcpW = Q_NULLPTR;
-    void sendToServer(const QString &msg);
+    SettingsDlg *_sDlg = Q_NULLPTR;
+    AddClientDlg *_cDlg = Q_NULLPTR;
+    ClientTableModel *model = Q_NULLPTR;
+    QString _hostName;
+    QString _currClientIp;
+
+    void sendToServer(const QString ip, const QString &msg);
 };
 #endif // MAINWINDOW_H

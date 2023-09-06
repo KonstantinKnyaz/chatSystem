@@ -15,14 +15,16 @@ public:
 public slots:
     void incomingConnection(qintptr handle);
     void slotReadyRead();
+//    QTcpSocket *nextPendingConnection();
 
 private:
     QTcpSocket *_socket = Q_NULLPTR;
-    QHash<quint64,QTcpSocket*> *_Sockets = Q_NULLPTR;
+    QHash<QString,QTcpSocket*> *_Sockets = Q_NULLPTR;
     QByteArray _data;
     quint16 nextBlockSize = 0;
+    QString _hostName;
 
-    void sendToClient(QString &msg);
+    void sendToClient(QString &ip, QString &msg);
 };
 
 #endif // SERVER_H
