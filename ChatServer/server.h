@@ -23,6 +23,11 @@ private:
     QByteArray _data;
     quint16 nextBlockSize = 0;
     QString _hostName;
+    QByteArray _fileByte;
+    qint64 _fileSize = 0;
+    QString _fileName;
+    QString _msgType = "msg";
+
 
     void sendToClient(QString &ip, QString &msg);
 };

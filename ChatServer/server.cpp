@@ -1,8 +1,9 @@
 #include "server.h"
 #include <QTime>
+#include <QFile>
 
 Server::Server() :
-_Sockets(new QHash<QString,QTcpSocket*>())
+    _Sockets(new QHash<QString,QTcpSocket*>())
 {
     if(listen(QHostAddress::Any, 2323)) {
         qInfo() << "Сервер запущен";
@@ -33,6 +34,7 @@ void Server::slotReadyRead()
         qWarning() << "DataStream error:" << in.status();
         return;
     }
+
     while(true) {
         if(nextBlockSize == 0) {
             qDebug() << "nextBlockSize = 0";
@@ -41,18 +43,50 @@ void Server::slotReadyRead()
                 break;
             }
             in >> nextBlockSize;
+
             qDebug() << "nextBlockSize -" << nextBlockSize;
         }
-        if(_socket->bytesAvailable() < nextBlockSize) {
-            qDebug() << "data not full";
+        qDebug() << "bytesAvailable: " << _socket->bytesAvailable();
+
+        //        if(_socket->bytesAvailable() < nextBlockSize) {
+        //            qDebug() << "data not full";
+        //            break;
+        //        }
+
+        if(_msgType == "file") {
+            qDebug() << "Запись файла...";
+            QByteArray ar = _socket->readAll();
+            _fileByte += ar;
+            qDebug() << "размер байтов: " << _fileByte.size();
+            if(_fileByte.size() >= _fileSize) {
+                QFile file;
+                file.setFileName("C:/Users/knyazev.kp/Pictures/Camera Roll/"+_fileName);
+                if(!file.open(QIODevice::WriteOnly | QIODevice::Append)) {
+                    qWarning() << "Не удалось записать файл";
+                    return;
+                }
+                _fileByte.remove(0, 4);
+                file.write(_fileByte);
+                file.close();
+                _fileByte.clear();
+                _msgType = "msg";
+            }
             break;
         }
-        QString str;
-        QString ip;
-        in >> ip >> _hostName >> str;
+
+        in >> _msgType;
+        if(_msgType == "file") {
+            in >> _fileSize >> _fileName;
+            qDebug() << _fileSize << _fileName;
+        } else {
+            QString str;
+            QString ip;
+            in >> ip >> _hostName >> str;
+            qDebug() << ip << _hostName << " " << str;
+            sendToClient(ip, str);
+        }
+
         nextBlockSize = 0;
-        qDebug() << ip << _hostName << " " << str;
-        sendToClient(ip, str);
         break;
     }
 }

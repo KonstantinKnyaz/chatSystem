@@ -32,6 +32,8 @@ private slots:
 
     void on_delClient_clicked();
 
+    void on_addFile_clicked();
+
 private:
     Ui::MainWindow *ui;
     TcpWorker *_tcpW = Q_NULLPTR;
@@ -40,6 +42,7 @@ private:
     ClientTableModel *model = Q_NULLPTR;
     QString _hostName;
     QString _currClientIp;
+    QString _fileName;
 
     void sendToServer(const QString ip, const QString &msg);
 };

@@ -3,6 +3,7 @@
 
 #include <QSettings>
 #include <QHostInfo>
+#include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -79,5 +80,12 @@ void MainWindow::on_delClient_clicked()
 {
     if(ui->clientTbl->currentIndex().isValid())
         model->remove(ui->clientTbl->currentIndex());
+}
+
+
+void MainWindow::on_addFile_clicked()
+{
+    _fileName = QFileDialog::getOpenFileName(NULL, "Выберите файл для отправки", QDir::homePath(), "*");
+    _tcpW->sendFile(_fileName);
 }
 
