@@ -27,9 +27,11 @@ private:
     qint64 _fileSize = 0;
     QString _fileName;
     QString _msgType = "msg";
+    QString _fIp;
 
+    bool sendToClient(QString &ip, QString &msg);
 
-    void sendToClient(QString &ip, QString &msg);
+    bool sendFileToClient();
 };
 
 #endif // SERVER_H

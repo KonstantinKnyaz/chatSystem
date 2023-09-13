@@ -12,9 +12,7 @@ public:
     explicit TcpWorker(QString &hostName, QObject *parent = Q_NULLPTR);
     ~TcpWorker();
 
-    void sentToServer(const QString ip, const QString &msg, const QString &fileName = Q_NULLPTR);
-
-    void sendFile(const QString &fileName);
+    void sentToServer(const QString ip, const QString &msg = Q_NULLPTR, const QString &fileName = Q_NULLPTR);
 
 public slots:
     void slotReadyRead();
@@ -28,6 +26,15 @@ private:
     QByteArray _data;
     quint16 nextBlockSize = 0;
     QString _hostName;
+    QByteArray _fileByte;
+    qint64 _fileSize = 0;
+    QString _fileName;
+    QString _msgType = "msg";
+    QString _fIp;
+
+    bool sendMsg(const QString ip, const QString &msg);
+
+    bool sendFile(const QString ip, const QString &fileName);
 };
 
 #endif // TCPWORKER_H

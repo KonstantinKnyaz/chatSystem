@@ -85,7 +85,10 @@ void MainWindow::on_delClient_clicked()
 
 void MainWindow::on_addFile_clicked()
 {
-    _fileName = QFileDialog::getOpenFileName(NULL, "Выберите файл для отправки", QDir::homePath(), "*");
-    _tcpW->sendFile(_fileName);
+    if(ui->clientTbl->currentIndex().isValid()) {
+        QString ip = ui->clientTbl->model()->index(ui->clientTbl->currentIndex().row(),1, ui->clientTbl->currentIndex()).data().toString();
+        _fileName = QFileDialog::getOpenFileName(NULL, "Выберите файл для отправки", QDir::homePath(), "*");
+        _tcpW->sentToServer(ip, Q_NULLPTR, _fileName);
+    }
 }
 
