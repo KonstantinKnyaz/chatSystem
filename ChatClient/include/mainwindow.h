@@ -28,6 +28,8 @@ private slots:
 
     void newMsg(QString host, QString msg);
 
+    void newFile(QString fileName, QByteArray data);
+
     void on_addClient_clicked();
 
     void on_delClient_clicked();
@@ -44,6 +46,6 @@ private:
     QString _currClientIp;
     QString _fileName = Q_NULLPTR;
 
-    void sendToServer(const QString ip, const QString &msg);
+    void sendToServer();
 };
 #endif // MAINWINDOW_H

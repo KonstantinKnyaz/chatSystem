@@ -64,15 +64,8 @@ void TcpWorker::slotReadyRead()
             _fileByte += ar;
             qDebug() << "размер байтов: " << _fileByte.size();
             if(_fileByte.size() >= _fileSize) {
-                QFile file;
-                file.setFileName("C:/Users/knyazev.kp/Pictures/Camera Roll/"+_fileName);
-                if(!file.open(QIODevice::WriteOnly | QIODevice::Append)) {
-                    qWarning() << "Не удалось записать файл";
-                    return;
-                }
                 _fileByte.remove(0, 4);
-                file.write(_fileByte);
-                file.close();
+                emit incomeFile(_fileName, _fileByte);
                 _fileByte.clear();
                 _msgType = "msg";
                 _fileSize = 0;
@@ -101,23 +94,6 @@ void TcpWorker::slotReadyRead()
 void TcpWorker::slotDisconnected()
 {
 
-//    file.setFileName("C:/Users/knyazev.kp/Pictures/Camera Roll/test.jpg");
-//    if(!file.open(QIODevice::WriteOnly)) {
-//        qWarning() << "Не удалось записать файл";
-//        return;
-//    }
-//    QDataStream in(&_data, QIODevice::ReadOnly);
-//    in.setVersion(QDataStream::Qt_6_2);
-//    if(in.status() != QDataStream::Ok) {
-//        qWarning() << "DataStream error:" << in.status();
-//        return;
-//    }
-
-//    qint64 fSize;
-//    QByteArray arrIn;
-//    in >> fSize >> arrIn;
-//    file.write(arrIn);
-    //    file.close();
 }
 
 void TcpWorker::sentToServer(const QString ip, const QString &msg, const QString &fileName)

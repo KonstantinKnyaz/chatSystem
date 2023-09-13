@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
     else
         _tcpW = new TcpWorker(_hostName, ip, port, this);
     connect(_tcpW, &TcpWorker::incomeMsg, this, &MainWindow::newMsg);
+    connect(_tcpW, &TcpWorker::incomeFile, this, &MainWindow::newFile);
 
     ui->clientTbl->setModel(model);
     ui->clientTbl->horizontalHeader()->setStretchLastSection(true);
@@ -41,22 +42,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_sendBtn_clicked()
 {
-    if(!ui->clientTbl->currentIndex().isValid())
-        return;
-    QString ip = ui->clientTbl->model()->index(ui->clientTbl->currentIndex().row(),1, ui->clientTbl->currentIndex()).data().toString();
-    sendToServer(ip, ui->msgLine->text());
-    ui->textBox->append("<font color=cyan> Я: </font><font color=white>" + ui->msgLine->text() + "</font>");
-    ui->msgLine->clear();
+    sendToServer();
 }
 
 void MainWindow::on_msgLine_returnPressed()
 {
-    if(!ui->clientTbl->currentIndex().isValid())
-        return;
-    QString ip = ui->clientTbl->model()->index(ui->clientTbl->currentIndex().row(),1, ui->clientTbl->currentIndex()).data().toString();
-    sendToServer(ip, ui->msgLine->text());
-    ui->textBox->append("<font color=cyan> Я: </font><font color=white>" + ui->msgLine->text() + "</font>");
-    ui->msgLine->clear();
+    sendToServer();
 }
 
 void MainWindow::newMsg(QString host, QString msg)
@@ -64,9 +55,29 @@ void MainWindow::newMsg(QString host, QString msg)
     ui->textBox->append("<font color=red>"+ host + ": </font><font color=white>" + msg + "</font>");
 }
 
-void MainWindow::sendToServer(const QString ip, const QString &msg)
+void MainWindow::newFile(QString fileName, QByteArray data)
 {
-    _tcpW->sentToServer(ip, msg, _fileName);
+    QFile file;
+    file.setFileName("C:/Users/knyazev.kp/Pictures/Camera Roll/"+ fileName);
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Append)) {
+        qWarning() << "Не удалось записать файл";
+        return;
+    }
+    file.write(data);
+    file.close();
+}
+
+void MainWindow::sendToServer()
+{
+    if(!ui->clientTbl->currentIndex().isValid())
+        return;
+    QString ip = ui->clientTbl->model()->index(ui->clientTbl->currentIndex().row(),1, ui->clientTbl->currentIndex()).data().toString();
+    _tcpW->sentToServer(ip, ui->msgLine->text(), _fileName);
+    if(!ui->msgLine->text().isEmpty())
+        ui->textBox->append("<font color=cyan> Я: </font><font color=white>" + ui->msgLine->text() + "</font>");
+    ui->msgLine->clear();
+    if(!_fileName.isEmpty())
+        ui->textBox->append("<font color=cyan> Я: </font><font color=white>" + _fileName + "</font>");
     _fileName.clear();
 }
 

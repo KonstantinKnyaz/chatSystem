@@ -20,6 +20,7 @@ public slots:
 
 signals:
     void incomeMsg(QString host, QString msg);
+    void incomeFile(QString fileName, QByteArray data);
 
 private:
     QTcpSocket *_socket = Q_NULLPTR;
