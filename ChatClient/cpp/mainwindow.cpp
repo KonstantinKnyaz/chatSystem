@@ -8,6 +8,8 @@
 #include <QTextBrowser>
 #include <QProcess>
 
+#define MAX_FILE_SIZE 5000000
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -121,6 +123,12 @@ void MainWindow::on_delClient_clicked()
 void MainWindow::on_addFile_clicked()
 {
     _fileName = QFileDialog::getOpenFileName(NULL, "Выберите файл для отправки", QDir::homePath(), "*");
+    QFile file(_fileName);
+    if(file.size() > MAX_FILE_SIZE) {
+        qWarning() << "Файл слишком большой";
+        _fileName.clear();
+        on_addFile_clicked();
+    }
 }
 
 void MainWindow::getLink(const QUrl &url)
