@@ -8,6 +8,7 @@
 #include "settingsdlg.h"
 #include "clienttablemodel.h"
 #include "addclientdlg.h"
+#include "popupnotifywidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -48,6 +49,7 @@ private:
     QString _currClientIp;
     QString _fileName = Q_NULLPTR;
     QHash<QString,QByteArray> *filesSpis = Q_NULLPTR;
+    PopupNotifyWidget *_popup = Q_NULLPTR;
 
     void sendToServer();
 

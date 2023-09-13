@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     , _cDlg(new AddClientDlg(this))
     , model(new ClientTableModel(this))
     , filesSpis(new QHash<QString,QByteArray>)
+    ,_popup(new PopupNotifyWidget(this))
 {
     ui->setupUi(this);
     this->setWindowTitle("Local Chat");
@@ -64,6 +65,8 @@ void MainWindow::on_msgLine_returnPressed()
 void MainWindow::newMsg(QString host, QString msg)
 {
     ui->textBox->append("<font color=red>"+ host + ": </font><font color=white>" + msg + "</font>");
+    _popup->setPopupText(host + ": " + msg);
+    _popup->show();
 }
 
 void MainWindow::newFile(QString host, QString fileName, QByteArray data)
@@ -71,6 +74,9 @@ void MainWindow::newFile(QString host, QString fileName, QByteArray data)
     ui->textBox->append("<font color=red>"+ host + ": </font><font color=white><a href = " + fileName + ">" + fileName + "</a></font>");
 
     filesSpis->insert(fileName, data);
+
+    _popup->setPopupText(host + ": " + fileName);
+    _popup->show();
 }
 
 void MainWindow::sendToServer()

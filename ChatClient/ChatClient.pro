@@ -13,12 +13,14 @@ INCLUDEPATH += include/
 SOURCES += \
     cpp/addclientdlg.cpp \
     cpp/clienttablemodel.cpp \
+    cpp/popupnotifywidget.cpp \
     cpp/settingsdlg.cpp \
     main.cpp \
     cpp/mainwindow.cpp \
     cpp/tcpworker.cpp
 
 HEADERS += \
+    include/popupnotifywidget.h \
     include/addclientdlg.h \
     include/clienttablemodel.h \
     include/settingsdlg.h \
