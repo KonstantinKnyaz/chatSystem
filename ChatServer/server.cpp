@@ -67,14 +67,16 @@ void Server::slotReadyRead()
                 _fileSize = 0;
                 _fileName.clear();
                 _fIp.clear();
+                _mutex.unlock();
             }
             break;
         }
 
         in >> _msgType;
         if(_msgType == "file") {
-            in >> _fileSize >> _fileName >> _fIp;
-            qDebug() << _fileSize << _fileName << _fIp;
+            _mutex.lock();
+            in >> _fileSize >> _fileName >> _fIp >> _hostName;
+            qDebug() << _fileSize << _fileName << _fIp << _hostName;
         } else {
             QString str;
             QString ip;
@@ -125,7 +127,7 @@ bool Server::sendFileToClient()
     qint64 fileSize = _fileByte.size();
     QString fName = _fileName;
     QString type = "file";
-    out << quint16(0) << type << fileSize << fName << _fIp;
+    out << quint16(0) << type << fileSize << fName << _fIp << _hostName;
     out.device()->seek(0);
     out << quint16(_data.size() - sizeof(quint16));
     res = _socket->write(_data);

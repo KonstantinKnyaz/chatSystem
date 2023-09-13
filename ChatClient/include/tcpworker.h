@@ -20,7 +20,7 @@ public slots:
 
 signals:
     void incomeMsg(QString host, QString msg);
-    void incomeFile(QString fileName, QByteArray data);
+    void incomeFile(QString host, QString fileName, QByteArray data);
 
 private:
     QTcpSocket *_socket = Q_NULLPTR;
@@ -32,6 +32,7 @@ private:
     QString _fileName;
     QString _msgType = "msg";
     QString _fIp;
+    QString _sender;
 
     bool sendMsg(const QString ip, const QString &msg);
 

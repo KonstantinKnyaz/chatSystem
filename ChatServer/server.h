@@ -5,6 +5,7 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QHash>
+#include <QMutex>
 
 class Server : public QTcpServer
 {
@@ -28,6 +29,7 @@ private:
     QString _fileName;
     QString _msgType = "msg";
     QString _fIp;
+    QMutex _mutex;
 
     bool sendToClient(QString &ip, QString &msg);
 

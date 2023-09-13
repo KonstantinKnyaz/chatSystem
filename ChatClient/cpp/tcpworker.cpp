@@ -65,7 +65,7 @@ void TcpWorker::slotReadyRead()
             qDebug() << "размер байтов: " << _fileByte.size();
             if(_fileByte.size() >= _fileSize) {
                 _fileByte.remove(0, 4);
-                emit incomeFile(_fileName, _fileByte);
+                emit incomeFile(_sender, _fileName, _fileByte);
                 _fileByte.clear();
                 _msgType = "msg";
                 _fileSize = 0;
@@ -77,8 +77,8 @@ void TcpWorker::slotReadyRead()
 
         in >> _msgType;
         if(_msgType == "file") {
-            in >> _fileSize >> _fileName >> _fIp;
-            qDebug() << _fileSize << _fileName << _fIp;
+            in >> _fileSize >> _fileName >> _fIp >> _sender;
+            qDebug() << _fileSize << _fileName << _fIp << _sender;
         } else {
             QString str;
             QString host;
@@ -138,7 +138,7 @@ bool TcpWorker::sendFile(const QString ip, const QString &fileName)
     qint64 fileSize = file.size();
     QString fName = info.fileName();
     QString type = "file";
-    out << quint16(0) << type << fileSize << fName << ip;
+    out << quint16(0) << type << fileSize << fName << ip << _hostName;
     out.device()->seek(0);
     out << quint16(_data.size() - sizeof(quint16));
     res = _socket->write(_data);

@@ -28,13 +28,15 @@ private slots:
 
     void newMsg(QString host, QString msg);
 
-    void newFile(QString fileName, QByteArray data);
+    void newFile(QString host, QString fileName, QByteArray data);
 
     void on_addClient_clicked();
 
     void on_delClient_clicked();
 
     void on_addFile_clicked();
+
+    void getLink(const QUrl &url);
 
 private:
     Ui::MainWindow *ui;
@@ -45,7 +47,10 @@ private:
     QString _hostName;
     QString _currClientIp;
     QString _fileName = Q_NULLPTR;
+    QHash<QString,QByteArray> *filesSpis = Q_NULLPTR;
 
     void sendToServer();
+
+    int saveFile(const QString &fileName);
 };
 #endif // MAINWINDOW_H
