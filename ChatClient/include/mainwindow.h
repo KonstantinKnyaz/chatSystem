@@ -42,7 +42,7 @@ private:
     ClientTableModel *model = Q_NULLPTR;
     QString _hostName;
     QString _currClientIp;
-    QString _fileName;
+    QString _fileName = Q_NULLPTR;
 
     void sendToServer(const QString ip, const QString &msg);
 };

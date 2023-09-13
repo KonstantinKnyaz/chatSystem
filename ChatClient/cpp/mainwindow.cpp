@@ -66,7 +66,8 @@ void MainWindow::newMsg(QString host, QString msg)
 
 void MainWindow::sendToServer(const QString ip, const QString &msg)
 {
-    _tcpW->sentToServer(ip, msg);
+    _tcpW->sentToServer(ip, msg, _fileName);
+    _fileName.clear();
 }
 
 void MainWindow::on_addClient_clicked()
@@ -85,10 +86,6 @@ void MainWindow::on_delClient_clicked()
 
 void MainWindow::on_addFile_clicked()
 {
-    if(ui->clientTbl->currentIndex().isValid()) {
-        QString ip = ui->clientTbl->model()->index(ui->clientTbl->currentIndex().row(),1, ui->clientTbl->currentIndex()).data().toString();
-        _fileName = QFileDialog::getOpenFileName(NULL, "Выберите файл для отправки", QDir::homePath(), "*");
-        _tcpW->sentToServer(ip, Q_NULLPTR, _fileName);
-    }
+    _fileName = QFileDialog::getOpenFileName(NULL, "Выберите файл для отправки", QDir::homePath(), "*");
 }
 
