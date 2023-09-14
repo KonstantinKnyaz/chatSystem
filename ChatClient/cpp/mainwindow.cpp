@@ -7,6 +7,7 @@
 #include <QDateTime>
 #include <QTextBrowser>
 #include <QProcess>
+#include <QMessageBox>
 
 #define MAX_FILE_SIZE 5000000
 
@@ -34,9 +35,11 @@ MainWindow::MainWindow(QWidget *parent)
         _tcpW = new TcpWorker(_hostName, this);
     else
         _tcpW = new TcpWorker(_hostName, ip, port, this);
+
     connect(_tcpW, &TcpWorker::incomeMsg, this, &MainWindow::newMsg);
     connect(_tcpW, &TcpWorker::incomeFile, this, &MainWindow::newFile);
     connect(ui->textBox, &QTextBrowser::anchorClicked, this, &MainWindow::getLink);
+
     ui->textBox->setOpenLinks(false);
     ui->textBox->setOpenExternalLinks(false);
 
@@ -125,12 +128,12 @@ void MainWindow::on_delClient_clicked()
         model->remove(ui->clientTbl->currentIndex());
 }
 
-
 void MainWindow::on_addFile_clicked()
 {
     _fileName = QFileDialog::getOpenFileName(NULL, "Выберите файл для отправки", QDir::homePath(), "*");
     QFile file(_fileName);
     if(file.size() > MAX_FILE_SIZE) {
+        QMessageBox::warning(this, "Внимание", "Файл слишком большой!", QMessageBox::Ok);
         qWarning() << "Файл слишком большой";
         _fileName.clear();
         on_addFile_clicked();
