@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QTcpSocket>
 
 #include "tcpworker.h"
 #include "settingsdlg.h"
@@ -54,5 +53,7 @@ private:
     void sendToServer();
 
     int saveFile(const QString &fileName);
+
+    void setDarkStyle();
 };
 #endif // MAINWINDOW_H

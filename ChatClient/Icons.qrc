@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>resources/download_folder_file_icon.ico</file>
+        <file>resources/ic-send_97591.ico</file>
+        <file>resources/minus.ico</file>
+        <file>resources/plus.ico</file>
+        <file>resources/chat_message.ico</file>
+    </qresource>
+</RCC>

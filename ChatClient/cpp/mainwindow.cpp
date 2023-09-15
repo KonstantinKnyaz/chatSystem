@@ -6,7 +6,6 @@
 #include <QFileDialog>
 #include <QDateTime>
 #include <QTextBrowser>
-#include <QProcess>
 #include <QMessageBox>
 
 #define MAX_FILE_SIZE 5000000
@@ -22,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     this->setWindowTitle("Local Chat");
 
-    QSettings settings("./settings.ini", QSettings::IniFormat);
+    QSettings settings(QDir::currentPath() + "/settings.ini", QSettings::IniFormat);
     settings.beginGroup("server");
     QString ip = settings.value("ip").toString();
     quint16 port = 0;
@@ -94,6 +93,7 @@ void MainWindow::sendToServer()
     if(!_fileName.isEmpty())
         ui->textBox->append("<font color=cyan> Я: </font><font color=white>" + _fileName + "</font>");
     _fileName.clear();
+    ui->addFile->toolTip().clear();
 }
 
 int MainWindow::saveFile(const QString &fileName)
@@ -113,6 +113,29 @@ int MainWindow::saveFile(const QString &fileName)
     file.close();
     filesSpis->erase(it);
     return 0;
+}
+
+void MainWindow::setDarkStyle()
+{
+    QPalette darkPalette;
+
+    darkPalette.setColor(QPalette::Window, QColor(53, 53, 53));
+    darkPalette.setColor(QPalette::WindowText, Qt::white);
+    darkPalette.setColor(QPalette::Base, QColor(25, 25, 25));
+    darkPalette.setColor(QPalette::AlternateBase, QColor(53, 53, 53));
+    darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
+    darkPalette.setColor(QPalette::ToolTipText, Qt::white);
+    darkPalette.setColor(QPalette::Text, Qt::white);
+    darkPalette.setColor(QPalette::Button, QColor(53, 53, 53));
+    darkPalette.setColor(QPalette::ButtonText, Qt::red);
+    darkPalette.setColor(QPalette::BrightText, Qt::red);
+    darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
+    darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
+    darkPalette.setColor(QPalette::HighlightedText, Qt::black);
+
+//    darkPalette.setColor(QPalette::PlaceholderText, Qt::red);
+
+    qApp->setPalette(darkPalette);
 }
 
 void MainWindow::on_addClient_clicked()
@@ -138,12 +161,13 @@ void MainWindow::on_addFile_clicked()
         _fileName.clear();
         on_addFile_clicked();
     }
+    ui->addFile->setToolTip(_fileName);
 }
 
 void MainWindow::getLink(const QUrl &url)
 {
     qDebug() << url.toString() << "файл для скачки";
     saveFile(url.toString());
-//    QProcess::startDetached(QString("gnome-terminal --working-directory=%1").arg(url.toString()));
+    //    QProcess::startDetached(QString("gnome-terminal --working-directory=%1").arg(url.toString()));
 }
 
